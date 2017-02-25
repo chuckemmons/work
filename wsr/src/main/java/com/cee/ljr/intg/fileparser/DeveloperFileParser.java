@@ -12,4 +12,6 @@ public interface DeveloperFileParser {
 	Developer parseForName(String nameInJira);
 	
 	List<Developer> parseByKeys(Collection<String> keys);
+	
+	List<Developer> parseByProjectKey(String projectKey);
 }

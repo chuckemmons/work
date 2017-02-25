@@ -25,7 +25,7 @@ public class StatusReportServiceTest extends BaseTest {
 	
 	@Test
 	public void testGetStatusReport() {
-		WeeklyStatusReport report = srService.getWeeklyStatusReport(xlsxPaths, new Date(), new Date());
+		WeeklyStatusReport report = srService.getWeeklyStatusReport(xlsxPaths, 0, new Date(), new Date());
 		
 		Assert.assertNotNull(report);
 		//log.debug(report.logStats());

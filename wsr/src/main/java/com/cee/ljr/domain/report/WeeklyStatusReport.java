@@ -23,17 +23,19 @@ public class WeeklyStatusReport {
 	private String title;
 	private Sprint sprint;
 	private Author author;
+	private Integer holidayDays;
 	private Date weekStartDate;
 	private Date weekEndingDate;
 	private double hoursWorkedBetween = 0.0;
 	
 	private Map<String, Project> keyToProjectMap = new HashMap<String, Project>(6,1.0f);
 
-	protected WeeklyStatusReport(String title, String classification, Sprint sprint, Author author, Date weekStartDate, Date weekEndingDate) {
+	protected WeeklyStatusReport(String title, String classification, Sprint sprint, Author author, int holidayDays, Date weekStartDate, Date weekEndingDate) {
 		this.title = title;
 		this.sprint = sprint;
 		this.author = author;
 		this.classification = classification;
+		this.holidayDays = holidayDays;
 		this.weekEndingDate = weekEndingDate;
 		this.weekStartDate = weekStartDate;
 	}
@@ -127,14 +129,6 @@ public class WeeklyStatusReport {
 	}
 
 	/**
-	 * @param title
-	 *            the title to set
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	/**
 	 * @return the sprint
 	 */
 	public Sprint getSprint() {
@@ -142,26 +136,10 @@ public class WeeklyStatusReport {
 	}
 
 	/**
-	 * @param sprint
-	 *            the sprint to set
-	 */
-	public void setSprint(Sprint sprint) {
-		this.sprint = sprint;
-	}
-
-	/**
 	 * @return the author
 	 */
 	public Author getPreparer() {
 		return author;
-	}
-
-	/**
-	 * @param author
-	 *            the author to set
-	 */
-	public void setPreparer(Author author) {
-		this.author = author;
 	}
 	
 	/**
@@ -172,13 +150,6 @@ public class WeeklyStatusReport {
 	}
 
 	/**
-	 * @param weekEndingDate the weekEndingDate to set
-	 */
-	public void setWeekEndingDate(Date weekEndingDate) {
-		this.weekEndingDate = weekEndingDate;
-	}	
-
-	/**
 	 * @return the weekStartDate
 	 */
 	public Date getWeekStartDate() {
@@ -186,25 +157,17 @@ public class WeeklyStatusReport {
 	}
 
 	/**
-	 * @param weekStartDate the weekStartDate to set
-	 */
-	public void setWeekStartDate(Date weekStartDate) {
-		this.weekStartDate = weekStartDate;
-	}
-
-	/**
 	 * @return the classification
 	 */
 	public String getClassification() {
 		return classification;
-	}
+	}	
 
 	/**
-	 * @param classification
-	 *            the classification to set
+	 * @return the holidayDays
 	 */
-	public void setClassification(String classification) {
-		this.classification = classification;
+	public Integer getHolidayDays() {
+		return holidayDays;
 	}
 
 	@Override

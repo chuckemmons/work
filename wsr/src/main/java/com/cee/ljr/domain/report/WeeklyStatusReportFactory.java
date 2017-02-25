@@ -8,11 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cee.ljr.domain.common.Developer;
 import com.cee.ljr.domain.common.Epic;
 import com.cee.ljr.domain.common.Project;
 import com.cee.ljr.domain.common.Sprint;
 import com.cee.ljr.domain.common.Story;
 import com.cee.ljr.domain.common.Task;
+import com.cee.ljr.intg.dao.DeveloperDao;
 import com.cee.ljr.intg.jira.domain.IssueType;
 import com.cee.ljr.intg.jira.domain.JiraIssue;
 import com.cee.ljr.intg.jira.domain.JiraIssues;
@@ -28,12 +30,15 @@ public class WeeklyStatusReportFactory {
 	ReportProperties srProps;
 	
 	@Autowired
+	DeveloperDao developerDao;
+	
+	@Autowired
 	JiraIssuesFactory jiraIssuesFactory;
 	
 	@Autowired
 	JiraIssueMapper jiraIssueMapper;
 	
-	public WeeklyStatusReport getWeeklyStatusReport(List<JiraIssue> jiraIssueList, Date weekStartDate, Date weekEndingDate) {
+	public WeeklyStatusReport getWeeklyStatusReport(List<JiraIssue> jiraIssueList, Integer holidayDays, Date weekStartDate, Date weekEndingDate) {
 		JiraIssues jiraIssues = jiraIssuesFactory.getJiraIssues(jiraIssueList);
 		
 		WeeklyStatusReport weeklyStatusReport = new WeeklyStatusReport(
@@ -41,6 +46,7 @@ public class WeeklyStatusReportFactory {
 				srProps.getReportClassification(), 
 				createSprint(), 
 				createAuthor(),
+				holidayDays,
 				weekStartDate,
 				weekEndingDate);	
 		
@@ -53,12 +59,12 @@ public class WeeklyStatusReportFactory {
 	}
 	
 	private void addBugsToStatusReport(JiraIssues jiraIssues, WeeklyStatusReport weeklyStatusReport) {
-		for (JiraIssue taskJiraIssue : jiraIssues.getBugs()) {
+		for (JiraIssue taskJiraIssue : jiraIssues.getTasks()) {
 			String projectKey = taskJiraIssue.getProjectKey();
 			Project project = weeklyStatusReport.getProject(projectKey);
 			
 			if (project == null) {
-				project = createNewProject(taskJiraIssue, jiraIssues);
+				project = createNewProject(taskJiraIssue, jiraIssues, weeklyStatusReport.getHolidayDays());
 				weeklyStatusReport.addProject(project);
 			} 
 			else {
@@ -72,17 +78,8 @@ public class WeeklyStatusReportFactory {
 			String projectKey = taskJiraIssue.getProjectKey();
 			Project project = weeklyStatusReport.getProject(projectKey);
 			
-			addTaskToProject(taskJiraIssue, project, jiraIssues);
-		}
-	}
-	
-	private void addTasksToStatusReport(JiraIssues jiraIssues, WeeklyStatusReport weeklyStatusReport) {
-		for (JiraIssue taskJiraIssue : jiraIssues.getTasks()) {
-			String projectKey = taskJiraIssue.getProjectKey();
-			Project project = weeklyStatusReport.getProject(projectKey);
-			
 			if (project == null) {
-				project = createNewProject(taskJiraIssue, jiraIssues);
+				project = createNewProject(taskJiraIssue, jiraIssues, weeklyStatusReport.getHolidayDays());
 				weeklyStatusReport.addProject(project);
 			} 
 			else {
@@ -91,6 +88,22 @@ public class WeeklyStatusReportFactory {
 		}
 	}
 	
+	private void addTasksToStatusReport(JiraIssues jiraIssues, WeeklyStatusReport weeklyStatusReport) {		
+		for (JiraIssue taskJiraIssue : jiraIssues.getTasks()) {
+			String projectKey = taskJiraIssue.getProjectKey();
+			Project project = weeklyStatusReport.getProject(projectKey);
+			
+			if (project == null) {
+				project = createNewProject(taskJiraIssue, jiraIssues, weeklyStatusReport.getHolidayDays());
+				weeklyStatusReport.addProject(project);
+			} 
+			else {
+				addTaskToProject(taskJiraIssue, project, jiraIssues);			
+			}
+		}
+	}
+	
+		
 	private void addTaskToProject(JiraIssue taskJiraIssue, Project project, JiraIssues jiraIssues) {
 		String epicKey = taskJiraIssue.getEpicKey().trim();
 		
@@ -123,14 +136,16 @@ public class WeeklyStatusReportFactory {
 		}
 	}
 	
-	private Project createNewProject(JiraIssue taskJiraIssue, JiraIssues jiraIssues) {
+	private Project createNewProject(JiraIssue taskJiraIssue, JiraIssues jiraIssues, int holidayDays) {
 		String issueType = taskJiraIssue.getType();
 		if(!IssueType.TASK.equals(issueType)) {
 			throw new IllegalArgumentException("JiraIssue is of type '" + issueType + ", must be a Task.");
 		}
 		String projectName = taskJiraIssue.getProjectName();
 		String projectKey = taskJiraIssue.getProjectKey();
-		Project project = new Project(projectKey, projectName);		
+		List<Developer> developers = developerDao.getByProjectKey(projectKey);
+		
+		Project project = new Project(projectKey, projectName, developers, holidayDays);		
 		
 		Epic epic = createNewEpic(taskJiraIssue, jiraIssues);
 		project.addEpic(epic);

@@ -10,12 +10,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 public class Epic extends BaseIssue {
-	private static final Logger log = LoggerFactory.getLogger(Epic.class);
+	private static final Logger log = LoggerFactory.getLogger(Epic.class);	
 	private String name;
 	private double hoursWorkedBetween;
 	private double totalHoursWorked;
 	
 	private Map<String, Story> keyToStoryMap = new HashMap<String, Story>(); 
+	
+	
+	public static final String TIME_OFF_EPIC_KEY = "Time Off";
 	
 	public Epic(String name) {
 		this.name = name;

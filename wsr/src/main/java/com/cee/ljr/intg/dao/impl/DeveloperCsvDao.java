@@ -30,4 +30,9 @@ public class DeveloperCsvDao implements DeveloperDao {
 	public List<Developer> getByKeys(Collection<String> keys) {
 		return fileParser.parseByKeys(keys);
 	}
+	
+	@Override
+	public List<Developer> getByProjectKey(String projectKey) {
+		return fileParser.parseByProjectKey(projectKey);
+	}
 }

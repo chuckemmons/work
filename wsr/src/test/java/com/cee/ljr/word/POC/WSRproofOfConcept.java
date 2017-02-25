@@ -25,7 +25,7 @@ public class WSRproofOfConcept extends BaseTest {
 		WeeklyStatusReportDocxGenerator weeklyStatusReportDocxGenerator = ctx.getBean(WeeklyStatusReportDocxGenerator.class);
 
 		// Sprint will be passed into the production code, lives here for now..
-		WeeklyStatusReport weeklyStatusReport = srService.getWeeklyStatusReport(csvPaths, new Date(), new Date());
+		WeeklyStatusReport weeklyStatusReport = srService.getWeeklyStatusReport(csvPaths, 0, new Date(), new Date());
 		weeklyStatusReportDocxGenerator.generateDocument(weeklyStatusReport);
 		
 		/*WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();

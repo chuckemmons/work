@@ -13,4 +13,6 @@ public interface DeveloperDao {
 	
 	List<Developer> getByKeys(Collection<String> keys);
 	
+	List<Developer> getByProjectKey(String projectKey);
+	
 }

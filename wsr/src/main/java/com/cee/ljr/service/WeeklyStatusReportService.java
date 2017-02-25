@@ -36,12 +36,12 @@ public class WeeklyStatusReportService {
 	@Value("${wsr.report.title}")
 	private String reportTitle;
 			
-	public WeeklyStatusReport getWeeklyStatusReport(String jiraFilePaths, Date weekStartDate, Date weekendingDate) {
+	public WeeklyStatusReport getWeeklyStatusReport(String jiraFilePaths, int holidayDays, Date weekStartDate, Date weekendingDate) {
 		log.info("initalizing {}", reportTitle);
 		
 		List<JiraIssue> jiraIssueList = jiraIssueDao.getAllIssues(jiraFilePaths);		
 		WeeklyStatusReport weeklyStatusReport = 
-				weeklyStatusReportFactory.getWeeklyStatusReport(jiraIssueList, weekStartDate, weekendingDate);
+				weeklyStatusReportFactory.getWeeklyStatusReport(jiraIssueList, holidayDays, weekStartDate, weekendingDate);
 		
 		log.info("{} initialized.", reportTitle);
 		

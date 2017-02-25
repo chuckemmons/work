@@ -60,6 +60,16 @@ public class DeveloperCsvFileParser extends BaseCsvFileParser<Developer> impleme
 		
 		return parseForAll(filePath, criteria);
 	}
+	
+	@Override
+	public List<Developer> parseByProjectKey(String projectKey) {
+		
+		Criteria criteria = new Criteria(
+			Condition.eq(DeveloperHeader.PROJECT_KEY, projectKey)
+		);
+		
+		return parseForAll(filePath, criteria);
+	}
 
 	
 	@Override
